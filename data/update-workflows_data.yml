@@ -1,0 +1,17 @@
+env:
+  # Repository containing the workflow templates
+  TEMPLATE_REPOSITORY_OWNER: per1234
+  TEMPLATE_REPOSITORY_NAME: github-actions-workflow-resources
+
+jobs:
+  update-workflows:
+    strategy:
+      matrix:
+        # Filenames without the extension. The data file name must match the workflow, but with a _data suffix
+        filename: |
+          - template: compile-examples
+            workflow: compile-examples
+          - template: spell-check
+            workflow: spell-check
+          - template: update-workflows
+            workflow: update-workflows

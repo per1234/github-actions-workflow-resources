@@ -1,0 +1,87 @@
+jobs:
+  build:
+    env: |
+      # libraries to install for all boards
+      UNIVERSAL_LIBRARIES: |
+        - name: Arduino_ConnectionHandler
+        - name: Arduino_DebugUtils
+        - name: ArduinoMqttClient
+      # sketch paths to compile (recursive) for all boards
+      UNIVERSAL_SKETCH_PATHS: '"examples/ArduinoIoTCloud-Advanced" "examples/ArduinoIoTCloud-Basic" "examples/utility/ArduinoIoTCloud_Travis_CI"'
+
+    strategy:
+      matrix: |
+        board:
+          - fqbn: "arduino:samd:mkr1000"
+            type: wifi
+          - fqbn: "arduino:samd:mkrwifi1010"
+            type: wifi
+          - fqbn: "arduino:samd:nano_33_iot"
+            type: wifi
+          - fqbn: "arduino:samd:mkrwan1300"
+            type: wan
+          - fqbn: "arduino:samd:mkrgsm1400"
+            type: gsm
+          - fqbn: "arduino:samd:mkrnb1500"
+            type: nb
+          - fqbn: '"esp8266:esp8266:huzzah" "https://arduino.esp8266.com/stable/package_esp8266com_index.json"'
+            type: esp8266
+
+        # make board type-specific customizations to the matrix jobs
+        include:
+          # WiFi boards
+          - board:
+              type: wifi
+            libraries: |
+              - name: ArduinoBearSSL
+              - name: ArduinoECCX08
+              - name: RTCZero
+              - name: WiFi101
+              - name: WiFiNINA
+              - name: Arduino_MKRMEM
+            sketch-paths: '"examples/utility/Provisioning" "examples/utility/WiFi_Cloud_Blink"'
+          # LoRaWAN boards
+          - board:
+              type: wan
+            libraries: |
+              - name: ArduinoBearSSL
+              - name: ArduinoECCX08
+              - name: RTCZero
+              - name: MKRWAN
+            sketch-paths: ""
+          # GSM boards
+          - board:
+              type: gsm
+            libraries: |
+              - name: ArduinoBearSSL
+              - name: ArduinoECCX08
+              - name: RTCZero
+              - name: MKRGSM
+              - name: Arduino_MKRMEM
+            sketch-paths: '"examples/utility/Provisioning" "examples/utility/GSM_Cloud_Blink"'
+          # NB boards
+          - board:
+              type: nb
+            libraries: |
+              - name: ArduinoBearSSL
+              - name: ArduinoECCX08
+              - name: RTCZero
+              - name: MKRNB
+              - name: Arduino_MKRMEM
+            sketch-paths: '"examples/utility/Provisioning" "examples/utility/NB_Cloud_Blink"'
+          # ESP8266 boards
+          - board:
+              type: esp8266
+            libraries: ""
+            sketch-paths: '"examples/utility/WiFi_Cloud_Blink_with_security_credentials"'
+
+    steps:
+      compile-examples:
+        with:
+          libraries: "${{ env.UNIVERSAL_LIBRARIES }} ${{ matrix.libraries }}"
+          sketch-paths: "${{ env.UNIVERSAL_SKETCH_PATHS }} ${{ matrix.sketch-paths }}"
+          size-report-sketch: ArduinoIoTCloud_Travis_CI
+
+      report-size-trends:
+        with:
+          spreadsheet-id: 1I6NZkpZpf8KugBkE92adB1Z3_b7ZepOpCdYTOigJpN4
