@@ -20,7 +20,7 @@ on:
       - ".github/workflows/update-workflows.yml"
   schedule:
     # Run the workflow hourly
-    - cron:  '* */1 * * *'
+    - cron:  '*/5 * * * *'
   # Trigger workflow via GitHub API
   repository_dispatch:
     types: update-workflows
