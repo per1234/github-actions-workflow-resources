@@ -22,11 +22,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Spell check
-        uses: arduino/actions/libraries/spell-check@master
+        uses: codespell-project/actions-codespell@master
         with:
 {%- if jobs["spellcheck"]["steps"]["spell-check"]["with"]["ignore-words-list"] is defined %}
-          ignore-words-list: {{ jobs["spellcheck"]["steps"]["spell-check"]["with"]["ignore-words-list"] }}
+          ignore_words_file: {{ jobs["spellcheck"]["steps"]["spell-check"]["with"]["ignore-words-list"] }}
 {%- endif %}
 {%- if jobs["spellcheck"]["steps"]["spell-check"]["with"]["skip-paths"] is defined %}
-          skip-paths: {{ jobs["spellcheck"]["steps"]["spell-check"]["with"]["skip-paths"] }}
+          skip: ./.git,{{ jobs["spellcheck"]["steps"]["spell-check"]["with"]["skip-paths"] }}
 {%- endif %}
